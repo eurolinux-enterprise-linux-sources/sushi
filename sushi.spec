@@ -1,29 +1,23 @@
 Name:           sushi
-Version:        3.12.0
-Release:        3%{?dist}
+Version:        3.21.91
+Release:        1%{?dist}
 Summary:        A quick previewer for Nautilus
-Group:          User Interface/Desktops
 
 License:        GPLv2+ with exceptions
-URL:            http://live.gnome.org/ThreePointOne/Features/FilePreviewing
-Source0:        http://ftp.gnome.org/pub/GNOME/sources/%{name}/3.12/%{name}-%{version}.tar.xz
+URL:            https://wiki.gnome.org/ThreePointOne/Features/FilePreviewing
+Source0:        https://download.gnome.org/sources/%{name}/3.21/%{name}-%{version}.tar.xz
 
-Patch0: 0001-text-properly-block-right-click-button-press-event.patch
-Patch1: 0002-text-remove-custom-style.patch
-Patch2: 0001-mainWindow-use-GDK-for-keyboard-events.patch
-Patch3: 0003-mainWindow-listen-to-motion-notify-signals-on-the-wi.patch
-
-BuildRequires:  gtksourceview3-devel
 BuildRequires:  intltool
 BuildRequires:  gjs-devel
-BuildRequires:  glib2-devel
-BuildRequires:  clutter-devel
-BuildRequires:  clutter-gtk-devel
-BuildRequires:  clutter-gst2-devel
-BuildRequires:  evince-devel
-BuildRequires:  gtk3-devel
-BuildRequires:  libmusicbrainz5-devel
-BuildRequires:  webkitgtk3-devel
+BuildRequires:  pkgconfig(clutter-gst-3.0)
+BuildRequires:  pkgconfig(clutter-gtk-1.0)
+BuildRequires:  pkgconfig(clutter-x11-1.0)
+BuildRequires:  pkgconfig(evince-document-3.0)
+BuildRequires:  pkgconfig(gobject-2.0)
+BuildRequires:  pkgconfig(gtk+-3.0)
+BuildRequires:  pkgconfig(gtksourceview-3.0)
+BuildRequires:  pkgconfig(libmusicbrainz5)
+BuildRequires:  pkgconfig(webkit2gtk-4.0)
 
 Obsoletes:      sushi-devel < 0.5.1
 
@@ -35,10 +29,6 @@ file manager.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 %build
 %configure --disable-static
@@ -46,26 +36,33 @@ make %{?_smp_mflags}
 
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT
+%make_install
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 %find_lang %{name}
 
-%post -p /sbin/ldconfig
 
-%postun -p /sbin/ldconfig
+%post
+/sbin/ldconfig
+
+%postun
+/sbin/ldconfig
 
 
 %files -f %{name}.lang
-%doc README COPYING AUTHORS NEWS TODO
+%doc README AUTHORS NEWS TODO
+%license COPYING
 %{_bindir}/%{name}
 %{_datadir}/%{name}
 %{_datadir}/dbus-1/services/*
-%{_datadir}/glib-2.0/schemas/org.gnome.sushi.gschema.xml
 %{_libexecdir}/*
 %{_libdir}/sushi/
 
 
 %changelog
+* Thu Feb 23 2017 Matthias Clasen <mclasen@redhatcom> - 3.21.91-1
+- Rebase to 3.21.91
+  Resolves: rhbz#1387047
+
 * Tue Aug 18 2015 Matthias Clasen <mclasen@redhatcom> - 3.13.0-3
 - Fix an undefined variable
 Resolve: #1254181

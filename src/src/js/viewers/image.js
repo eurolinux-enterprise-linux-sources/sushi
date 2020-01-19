@@ -35,11 +35,9 @@ const Lang = imports.lang;
 const MimeHandler = imports.ui.mimeHandler;
 const Utils = imports.ui.utils;
 
-function ImageRenderer(args) {
-    this._init(args);
-}
+const ImageRenderer = new Lang.Class({
+    Name: 'ImageRenderer',
 
-ImageRenderer.prototype = {
     _init : function(args) {
         this.moveOnClick = true;
         this.canFullScreen = true;
@@ -75,6 +73,7 @@ ImageRenderer.prototype = {
         (stream, null,
          Lang.bind(this, function(obj, res) {
              let pix = GdkPixbuf.Pixbuf.new_from_stream_finish(res);
+             pix = pix.apply_embedded_orientation();
 
              this._texture = new GtkClutter.Texture({ keep_aspect_ratio: true });
              this._texture.set_from_pixbuf(pix);
@@ -111,7 +110,7 @@ ImageRenderer.prototype = {
 
         return this._toolbarActor;
     },
-}
+});
 
 let handler = new MimeHandler.MimeHandler();
 let renderer = new ImageRenderer();

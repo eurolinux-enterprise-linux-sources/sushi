@@ -6,12 +6,6 @@ GtkWindow {
     color: @np_fg_color;
 }
 
-GtkSourceView {
-    color: @np_text_color;
-    background-color: shade (@np_fg_color, 1.10);
-    font: Monospace 10;
-}
-
 SushiFontWidget {
     background-color: transparent;
 }
@@ -21,34 +15,35 @@ SushiFontWidget {
     background-color: shade (@np_bg_color, 1.30);
 }
 
-.scrollbar.button:prelight,
-.scrollbar.slider:prelight {
+.scrollbar.button:hover,
+.scrollbar.slider:hover {
     background-color: shade (@np_bg_color, 1.45);
 }
 
-.scrollbar.button:prelight:active,
-.scrollbar.slider:prelight:active {
+.scrollbar.button:hover:active,
+.scrollbar.slider:hover:active {
     background-color: shade (@np_bg_color, 1.70);
 }
 
-.np-decoration {
-    font: bold;
+.titlebar {
+    background-color: black;
+    background-image: none;
+    box-shadow: none;
+    border: none;
 }
 
-.np-decoration.button {
+.titlebar .button {
     background-image: none;
-    padding: 4px;
 
     border-image: none;
     border-style: none;
     border-radius: 0;
     border-width: 0;
-    background-color: alpha (#000, 0.0);
-
-    -GtkWidget-focus-line-width: 0;
+    background-color: transparent;
+    box-shadow: none;
 }
 
-.np-decoration.button:hover {
+.titlebar .button:hover {
     background-image: -gtk-gradient(linear,
                                     left top,
                                     left bottom,
@@ -57,11 +52,16 @@ SushiFontWidget {
                                     to(alpha(@np_bg_color, 0.0)));
 }
 
-.np-decoration.button:hover:active {
+.titlebar .button:hover:active {
     background-image: -gtk-gradient(linear,
                                     left top,
                                     left bottom,
                                     from(alpha(@np_bg_color, 0.0)),
                                     color-stop(0.50, @np_bg_color),
                                     to(alpha(@np_bg_color, 0.0)));
+}
+
+.window-frame {
+    box-shadow: none;
+    margin: 0;
 }

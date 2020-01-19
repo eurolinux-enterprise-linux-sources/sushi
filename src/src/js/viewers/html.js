@@ -26,17 +26,16 @@
 const GtkClutter = imports.gi.GtkClutter;
 const Gtk = imports.gi.Gtk;
 const GLib = imports.gi.GLib;
-const WebKit = imports.gi.WebKit;
+const Lang = imports.lang;
 const Sushi = imports.gi.Sushi;
+const WebKit = imports.gi.WebKit2;
 
 const MimeHandler = imports.ui.mimeHandler;
 const Utils = imports.ui.utils;
 
-function HTMLRenderer(args) {
-    this._init(args);
-}
+const HTMLRenderer = new Lang.Class({
+    Name: 'HTMLRenderer',
 
-HTMLRenderer.prototype = {
     _init : function(args) {
         this.moveOnClick = false;
         this.canFullScreen = true;
@@ -47,18 +46,16 @@ HTMLRenderer.prototype = {
         this._file = file;
         this._callback = callback;
 
-        this._webView = WebKit.WebView.new();
-        this._scrolledWin = Gtk.ScrolledWindow.new (null, null);
-        this._scrolledWin.add(this._webView);
-        this._scrolledWin.show_all();
+        this._webView = new WebKit.WebView();
+        this._webView.show_all();
 
         /* disable the default context menu of the web view */
-        let settings = this._webView.settings;
-        settings.enable_default_context_menu = false;
+        this._webView.connect ("context-menu",
+                               function() {return true;});
 
         this._webView.load_uri(file.get_uri());
 
-        this._actor = new GtkClutter.Actor({ contents: this._scrolledWin });
+        this._actor = new GtkClutter.Actor({ contents: this._webView });
         this._actor.set_reactive(true);
 
         this._callback();
@@ -92,7 +89,7 @@ HTMLRenderer.prototype = {
 
         return this._toolbarActor;
     }
-}
+});
 
 let handler = new MimeHandler.MimeHandler();
 let renderer = new HTMLRenderer();

@@ -23,35 +23,28 @@
  *
  */
 
-const Gio = imports.gi.Gio;
-const GLib = imports.gi.GLib;
-const GObject = imports.gi.GObject;
+const Clutter = imports.gi.Clutter;
+const ClutterGdk = imports.gi.ClutterGdk;
 const Gdk = imports.gi.Gdk;
 const GdkX11 = imports.gi.GdkX11;
-const GdkPixbuf = imports.gi.GdkPixbuf;
+const Gio = imports.gi.Gio;
+const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const GtkClutter = imports.gi.GtkClutter;
-const Clutter = imports.gi.Clutter;
-const Pango = imports.gi.Pango;
-
-const Cairo = imports.cairo;
-const Tweener = imports.ui.tweener;
 const Lang = imports.lang;
-
 const Mainloop = imports.mainloop;
-
-const MimeHandler = imports.ui.mimeHandler;
-const Constants = imports.util.constants;
-const SpinnerBox = imports.ui.spinnerBox;
-const Utils = imports.ui.utils;
-
+const Pango = imports.gi.Pango;
 const Sushi = imports.gi.Sushi;
 
-function MainWindow(args) {
-    this._init(args);
-}
+const Constants = imports.util.constants;
+const MimeHandler = imports.ui.mimeHandler;
+const SpinnerBox = imports.ui.spinnerBox;
+const Tweener = imports.ui.tweener;
+const Utils = imports.ui.utils;
 
-MainWindow.prototype = {
+const MainWindow = new Lang.Class({
+    Name: 'MainWindow',
+
     _init : function(args) {
         args = args || {};
 
@@ -74,18 +67,14 @@ MainWindow.prototype = {
     },
 
     _createGtkWindow : function() {
-        this._settings = new Gio.Settings({ schema_id: 'org.gnome.sushi' });
-        this._clientDecorated = this._settings.get_boolean('client-decoration');
-
         this._gtkWindow = new Gtk.Window({ type: Gtk.WindowType.TOPLEVEL,
-                                           focusOnMap: true,
-                                           decorated: !this._clientDecorated,
-                                           hasResizeGrip: false,
                                            skipPagerHint: true,
                                            skipTaskbarHint: true,
                                            windowPosition: Gtk.WindowPosition.CENTER,
                                            gravity: Gdk.Gravity.CENTER,
                                            application: this._application });
+        this._titlebar = new Gtk.HeaderBar({ show_close_button: true });
+        this._gtkWindow.set_titlebar(this._titlebar);
 
         let screen = Gdk.Screen.get_default();
         this._gtkWindow.set_visual(screen.get_rgba_visual());
@@ -122,14 +111,14 @@ MainWindow.prototype = {
             new Clutter.BindConstraint({ coordinate: Clutter.BindCoordinate.SIZE,
                                          source: this._stage }));
         this._stage.add_actor(this._mainGroup);
-        this._mainGroup.set_opacity(0);
 
-        this._stage.connect('key-press-event',
-                            Lang.bind(this, this._onStageKeyPressEvent));
+        this._gtkWindow.connect('key-press-event',
+				Lang.bind(this, this._onKeyPressEvent));
+        this._gtkWindow.connect('motion-notify-event',
+                                Lang.bind(this, this._onMotionNotifyEvent));
+
         this._stage.connect('button-press-event',
                             Lang.bind(this, this._onButtonPressEvent));
-        this._stage.connect('motion-event',
-                            Lang.bind(this, this._onMotionEvent));
     },
 
     _createSolidBackground: function() {
@@ -151,16 +140,11 @@ MainWindow.prototype = {
         if (this._background)
             return;
 
-        if (this._clientDecorated) {
-            this._background = Sushi.create_rounded_background();
-        } else {
-            this._background = new Clutter.Rectangle();
-            this._background.set_color(new Clutter.Color({ red: 0,
-                                                           green: 0,
-                                                           blue: 0,
-                                                           alpha: 255 }));
-        }
-
+        this._background = new Clutter.Actor();
+        this._background.set_background_color(new Clutter.Color({ red: 0,
+                                                                  green: 0,
+                                                                  blue: 0,
+                                                                  alpha: 255 }));
         this._background.set_opacity(Constants.VIEW_BACKGROUND_OPACITY);
         this._mainLayout.add(this._background, Clutter.BinAlignment.FILL, Clutter.BinAlignment.FILL);
 
@@ -174,20 +158,23 @@ MainWindow.prototype = {
         this._clearAndQuit();
     },
 
-    _onStageKeyPressEvent : function(actor, event) {
-        let key = event.get_key_symbol();
+    _onKeyPressEvent : function(actor, event) {
+        let key = event.get_keyval()[1];
 
-        if (key == Clutter.KEY_Escape ||
-            key == Clutter.KEY_space ||
-            key == Clutter.KEY_q)
-            this._fadeOutWindow();
+        if (key == Gdk.KEY_Escape ||
+            key == Gdk.KEY_space ||
+            key == Gdk.KEY_q)
+            this._clearAndQuit();
 
-        if (key == Clutter.KEY_f ||
-            key == Clutter.KEY_F11)
+        if (key == Gdk.KEY_f ||
+            key == Gdk.KEY_F11)
             this.toggleFullScreen();
+
+        return false;
     },
 
     _onButtonPressEvent : function(actor, event) {
+        let stageWin = ClutterGdk.get_stage_window(this._stage);
         let win_coords = event.get_coords();
 
         if ((event.get_source() == this._toolbarActor) ||
@@ -201,9 +188,8 @@ MainWindow.prototype = {
             return false;
         }
 
-        let root_coords =
-            this._gtkWindow.get_window().get_root_coords(win_coords[0],
-                                                         win_coords[1]);
+        let root_coords = stageWin.get_root_coords(win_coords[0],
+                                                   win_coords[1]);
 
         this._gtkWindow.begin_move_drag(event.get_button(),
                                         root_coords[0],
@@ -213,7 +199,7 @@ MainWindow.prototype = {
         return false;
     },
 
-    _onMotionEvent : function() {
+    _onMotionNotifyEvent : function() {
         if (this._toolbarActor)
             this._resetToolbar();
 
@@ -226,10 +212,9 @@ MainWindow.prototype = {
     _getTextureSize : function() {
         let screenSize = [ this._gtkWindow.get_window().get_width(),
                            this._gtkWindow.get_window().get_height() ];
-        let yPadding = this._clientDecorated ? Constants.VIEW_PADDING_Y : 0;
 
         let availableWidth = this._isFullScreen ? screenSize[0] : Constants.VIEW_MAX_W - 2 * Constants.VIEW_PADDING_X;
-        let availableHeight = this._isFullScreen ? screenSize[1] : Constants.VIEW_MAX_H - yPadding;
+        let availableHeight = this._isFullScreen ? screenSize[1] : Constants.VIEW_MAX_H - Constants.VIEW_PADDING_Y;
 
         let textureSize = this._renderer.getSizeForAllocation([availableWidth, availableHeight], this._isFullScreen);
 
@@ -239,14 +224,13 @@ MainWindow.prototype = {
     _getWindowSize : function() {
         let textureSize = this._getTextureSize();
         let windowSize = textureSize;
-        let yPadding = this._clientDecorated ? Constants.VIEW_PADDING_Y : 0;
 
         if (textureSize[0] < (Constants.VIEW_MIN - 2 * Constants.VIEW_PADDING_X) &&
-            textureSize[1] < (Constants.VIEW_MIN - yPadding)) {
+            textureSize[1] < (Constants.VIEW_MIN - Constants.VIEW_PADDING_Y)) {
             windowSize = [ Constants.VIEW_MIN, Constants.VIEW_MIN ];
         } else if (!this._isFullScreen) {
             windowSize = [ windowSize[0] + 2 * Constants.VIEW_PADDING_X,
-                           windowSize[1] + yPadding ];
+                           windowSize[1] + Constants.VIEW_PADDING_Y ];
         }
 
         return windowSize;
@@ -372,11 +356,6 @@ MainWindow.prototype = {
                            time: 0.15,
                            transition: 'easeOutQuad'
                          });
-        Tweener.addTween(this._titleGroup,
-                         { opacity: 255,
-                           time: 0.15,
-                           transition: 'easeOutQuad'
-                         });
     },
 
     _exitFullScreen : function() {
@@ -417,7 +396,7 @@ MainWindow.prototype = {
         this._background = null;
 	this._createSolidBackground();
 
-	/* Fade in everything but the title */
+	/* Fade in everything */
         Tweener.addTween(this._mainGroup,
                          { opacity: 255,
                            time: 0.15,
@@ -468,11 +447,6 @@ MainWindow.prototype = {
         /* quickly fade out everything,
          * and then fullscreen the (empty) window.
          */
-        Tweener.addTween(this._titleGroup,
-                         { opacity: 0,
-                           time: 0.10,
-                           transition: 'easeOutQuad'
-                         });
         Tweener.addTween(this._mainGroup,
                          { opacity: 0,
                            time: 0.10,
@@ -506,8 +480,8 @@ MainWindow.prototype = {
         this._toolbarActor.set_opacity(0);
 
         this._toolbarActor.margin_bottom = Constants.TOOLBAR_SPACING;
-        this._toolbarActor.margin_left = Constants.TOOLBAR_SPACING;
-        this._toolbarActor.margin_right = Constants.TOOLBAR_SPACING;
+        this._toolbarActor.margin_start = Constants.TOOLBAR_SPACING;
+        this._toolbarActor.margin_end = Constants.TOOLBAR_SPACING;
 
         this._mainLayout.add(this._toolbarActor,
                              Clutter.BinAlignment.CENTER, Clutter.BinAlignment.END);
@@ -550,103 +524,9 @@ MainWindow.prototype = {
         return false;
     },
 
-
-    /**************************************************************************
-     ************************ titlebar helpers ********************************
-     **************************************************************************/
-    _createTitle : function() {
-        if (this._titleGroup) {
-            this._titleGroup.raise_top();
-            return;
-        }
-
-        this._titleGroupLayout = new Clutter.BoxLayout();
-        this._titleGroup =  new Clutter.Box({ layout_manager: this._titleGroupLayout,
-                                              opacity: 0 });
-        this._stage.add_actor(this._titleGroup);
-
-        this._titleGroup.add_constraint(
-            new Clutter.BindConstraint({ source: this._stage,
-                                         coordinate: Clutter.BindCoordinate.WIDTH }));
-
-        // if we don't draw client decorations, just create an empty actor
-        if (!this._clientDecorated)
-            return;
-
-        this._titleLabel = new Gtk.Label({ label: '',
-					   ellipsize: Pango.EllipsizeMode.END,
-                                           margin: 6 });
-        this._titleLabel.get_style_context().add_class('np-decoration');
-
-        this._titleLabel.show();
-        this._titleActor = new GtkClutter.Actor({ contents: this._titleLabel });
-        Utils.alphaGtkWidget(this._titleActor.get_widget());
-
-        this._quitButton =
-            new Gtk.Button({ image: new Gtk.Image ({ icon_size: Gtk.IconSize.MENU,
-                                                     icon_name: 'window-close-symbolic' })});
-        this._quitButton.get_style_context().add_class('np-decoration');
-        this._quitButton.show();
-
-        this._quitButton.connect('clicked',
-                                 Lang.bind(this,
-                                           this._clearAndQuit));
-
-        this._quitActor = new GtkClutter.Actor({ contents: this._quitButton });
-        Utils.alphaGtkWidget(this._quitActor.get_widget());
-        this._quitActor.set_reactive(true);
-
-        let hidden = new Clutter.Actor();
-        let size = this._quitButton.get_preferred_size()[1];
-        hidden.set_size(size.width, size.height);
-
-        this._titleGroupLayout.pack(hidden, false, false, false,
-                                    Clutter.BoxAlignment.START, Clutter.BoxAlignment.START);
-        this._titleGroupLayout.pack(this._titleActor, true, true, false,
-                                    Clutter.BoxAlignment.CENTER, Clutter.BoxAlignment.START);
-        this._titleGroupLayout.pack(this._quitActor, false, false, false,
-                                    Clutter.BoxAlignment.END, Clutter.BoxAlignment.START);
-    },
-
     /**************************************************************************
      *********************** Window move/fade helpers *************************
      **************************************************************************/
-    _fadeInWindow : function() {
-        this._mainGroup.set_opacity(0);
-        this._titleGroup.set_opacity(0);
-
-        this._gtkWindow.show_all();
-
-        Tweener.addTween(this._mainGroup,
-                         { opacity: 255,
-                           time: 0.3,
-                           transition: 'easeOutQuad' });
-        Tweener.addTween(this._titleGroup,
-                         { opacity: 255,
-                           time: 0.3,
-                           transition: 'easeOutQuad' });
-    },
-
-    _fadeOutWindow : function() {
-        this._removeToolbarTimeout();
-
-        Tweener.addTween(this._titleGroup,
-                         { opacity: 0,
-                           time: 0.15,
-                           transition: 'easeOutQuad'
-                         });
-
-        Tweener.addTween(this._mainGroup,
-                         { opacity: 0,
-                           time: 0.15,
-                           transition: 'easeOutQuad',
-                           onComplete: function () {
-                               this._clearAndQuit();
-                           },
-                           onCompleteScope: this
-                         });
-    },
-
     _clearAndQuit : function() {
         if (this._renderer.clear)
             this._renderer.clear();
@@ -660,10 +540,12 @@ MainWindow.prototype = {
     setParent : function(xid) {
         this._parent = Sushi.create_foreign_window(xid);
         this._gtkWindow.realize();
-        this._gtkWindow.get_window().set_transient_for(this._parent);
+        if (this._parent)
+            this._gtkWindow.get_window().set_transient_for(this._parent);
         this._gtkWindow.show_all();
 
-        this._gtkWindow.get_window().move_to_current_desktop();
+        if (this._gtkWindow.get_window().move_to_current_desktop)
+          this._gtkWindow.get_window().move_to_current_desktop();
     },
 
     setFile : function(file) {
@@ -672,15 +554,11 @@ MainWindow.prototype = {
         this._createRenderer(file);
         this._createTexture();
         this._createToolbar();
-        this._createTitle();
 
-        this._fadeInWindow();
+        this._gtkWindow.show_all();
     },
 
     setTitle : function(label) {
-        if (this._clientDecorated)
-            this._titleLabel.set_label(label);
-
         this._gtkWindow.set_title(label);
     },
 
@@ -700,6 +578,6 @@ MainWindow.prototype = {
     },
 
     close : function() {
-        this._fadeOutWindow();
+        this._clearAndQuit();
     }
-}
+});

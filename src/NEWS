@@ -1,3 +1,56 @@
+3.21.91
+=======
+
+- Make sushi work under Wayland
+- Fix builddir != srcdir builds
+- Translation updates
+
+3.20.0
+======
+
+- Link directly with harfbuzz (Andreas Henriksson)
+- Translation updates
+
+3.19.90 - "Hardcore Chilling"
+=============================
+
+- Port to ClutterGst 3.0 (Lionel Landwerlin)
+- Don't assume X (Matthias Clasen)
+- Don't use deprecated style classes (Matthias Clasen)
+- Port to GTask
+- Fix toolbar spacing
+- Resync font renderer from gnome-font-viewer
+
+3.18.0 - "Symbiosis"
+====================
+
+- Translation updates
+
+3.17.4 - "Dark Wave"
+====================
+
+- Apply embedded orientation to images
+- Fix encoding problems when loading non utf-8 text files
+- Do not crash when right clicking text previews
+- Add a way to easily run under gdb
+- Use regular GTK client side decorations
+- Use GResource for auxiliary data
+- Fix theming glitches after GTK update (Trinh Anh Ngoc)
+
+3.16.0
+======
+
+- Translation updates
+
+3.15.90 - "Mexican Bus"
+=======================
+
+- Fix deadlock with recent clutter/clutter-gtk
+- Don't require a parent window
+- Port HTML viewer to WebKit2 (Marcos Chavarría Teijeiro)
+- Fix margins in RTL (Yosef Or Boczko)
+- Fix toolbar icons for RTL (Yosef Or Boczko)
+
 3.12.0 - "Hippie Hill"
 ======================
 

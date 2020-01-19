@@ -37,11 +37,9 @@ const Constants = imports.util.constants;
 const MimeHandler = imports.ui.mimeHandler;
 const Utils = imports.ui.utils;
 
-function EvinceRenderer(args) {
-    this._init(args);
-}
+const EvinceRenderer = new Lang.Class({
+    Name: 'EvinceRenderer',
 
-EvinceRenderer.prototype = {
     _init : function(args) {
         EvDoc.init();
 
@@ -114,8 +112,8 @@ EvinceRenderer.prototype = {
     },
 
     _createLabelItem : function() {
-        this._pageLabel = new Gtk.Label({ margin_left: 10,
-                                          margin_right: 10 });
+        this._pageLabel = new Gtk.Label({ margin_start: 10,
+                                          margin_end: 10 });
 
         let item = new Gtk.ToolItem();
         item.set_expand(true);
@@ -133,12 +131,8 @@ EvinceRenderer.prototype = {
 
         this._toolbarActor = new GtkClutter.Actor({ contents: this._mainToolbar });
 
-        let isRtl = (this._mainToolbar.get_direction() == Gtk.TextDirection.RTL);
-        let prevIconName = isRtl ? 'go-previous-rtl-symbolic' : 'go-previous-symbolic';
-        let nextIconName = isRtl ? 'go-next-rtl-symbolic' : 'go-next-symbolic';
-
         this._toolbarBack = new Gtk.ToolButton({ expand: false,
-                                                 icon_name: prevIconName });
+                                                 icon_name: 'go-previous-symbolic' });
         this._toolbarBack.show();
         this._mainToolbar.insert(this._toolbarBack, -1);
 
@@ -151,7 +145,7 @@ EvinceRenderer.prototype = {
         this._mainToolbar.insert(labelItem, -1);
 
         this._toolbarForward = new Gtk.ToolButton({ expand: false,
-                                                    icon_name: nextIconName });
+                                                    icon_name: 'go-next-symbolic' });
         this._toolbarForward.show();
         this._mainToolbar.insert(this._toolbarForward, -1);
 
@@ -177,7 +171,7 @@ EvinceRenderer.prototype = {
         this._document = null;
         this._pdfLoader = null;
     }
-}
+});
 
 let handler = new MimeHandler.MimeHandler();
 let renderer = new EvinceRenderer();

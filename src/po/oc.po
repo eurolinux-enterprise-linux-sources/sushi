@@ -1,67 +1,69 @@
-# Swedish translation for sushi.
-# Copyright © 2011, 2012 Free Software Foundation, Inc.
+# Occitan translation for sushi.
+# Copyright (C) 2011 sushi's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sushi package.
-# Daniel Nylander <po@danielnylander.se>, 2011, 2012.
-#
+# Cédric Valmary <cvalmary@yahoo.fr>, 2015.
+# Cédric Valmary (Tot en òc) <cvalmary@yahoo.fr>, 2015.
+# Cédric Valmary (totenoc.eu) <cvalmary@yahoo.fr>, 2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: sushi\n"
+"Project-Id-Version: sushi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sushi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-02-17 14:46+0000\n"
-"PO-Revision-Date: 2012-09-02 10:42+0100\n"
-"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
-"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
-"Language: sv\n"
+"POT-Creation-Date: 2016-05-05 20:22+0000\n"
+"PO-Revision-Date: 2016-05-05 21:48+0200\n"
+"Last-Translator: Cédric Valmary (totenoc.eu) <cvalmary@yahoo.fr>\n"
+"Language-Team: Tot En Òc\n"
+"Language: oc\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Virtaal 0.7.1\n"
+"X-Project-Style: gnome\n"
 
 #: ../src/js/ui/fallbackRenderer.js:119
 msgid "Type"
-msgstr "Typ"
+msgstr "Tipe"
 
 #: ../src/js/ui/fallbackRenderer.js:120 ../src/js/ui/fallbackRenderer.js:129
 #: ../src/js/ui/fallbackRenderer.js:135 ../src/js/ui/spinnerBox.js:56
 msgid "Loading..."
-msgstr "Läser in..."
+msgstr "Cargament..."
 
 #: ../src/js/ui/fallbackRenderer.js:128
 msgid "Size"
-msgstr "Storlek"
+msgstr "Talha"
 
 #: ../src/js/ui/fallbackRenderer.js:134
 msgid "Modified"
-msgstr "Ändrad"
+msgstr "Modificat"
 
 #: ../src/js/viewers/audio.js:172
 msgid "from"
-msgstr "från"
+msgstr "de"
 
 #: ../src/js/viewers/audio.js:174
 msgid "by"
-msgstr "av"
+msgstr "per"
 
 #: ../src/js/viewers/evince.js:77
 #, javascript-format
 msgid "%d of %d"
-msgstr "%d av %d"
+msgstr "%d sus %d"
 
 #: ../src/libsushi/sushi-file-loader.c:639
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
-msgstr[0] "%d objekt"
-msgstr[1] "%d objekt"
+msgstr[0] "%d element"
+msgstr[1] "%d elements"
 
 #: ../src/libsushi/sushi-file-loader.c:651
 msgid "Empty Folder"
-msgstr "Tom mapp"
+msgstr "Dorsièr void"
 
 #~ msgid "Client decoration"
-#~ msgstr "Klientdekoration"
+#~ msgstr "Decoracion del client"
 
 #~ msgid "Whether the window draws WM decorations itself"
-#~ msgstr ""
-#~ "Huruvida fönstret ritar ut dekorationer från fönsterhanteraren själv"
+#~ msgstr "Indica se la fenèstra dessenha las decoracions del WM ela-meteissa"

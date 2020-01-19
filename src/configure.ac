@@ -1,6 +1,6 @@
 dnl -*- mode: m4 -*-
 AC_PREREQ(2.63)
-AC_INIT([sushi],[3.12.0],[],[sushi])
+AC_INIT([sushi],[3.21.91],[],[sushi])
 
 AC_CONFIG_HEADERS([config/config.h])
 AC_CONFIG_SRCDIR([src/main.c])
@@ -41,21 +41,21 @@ AC_PROG_LIBTOOL
 ## don't rerun to this point if we abort
 AC_CACHE_SAVE
 
-GLIB_GSETTINGS
-
 GJS_JS_DIR=`$PKG_CONFIG --variable=datadir gjs-1.0`/gjs-1.0
 AC_SUBST(GJS_JS_DIR)
 
 CLUTTER_MIN_VERSION=1.11.4
 GLIB_MIN_VERSION=2.29.14
-GTK_MIN_VERSION=3.4.0
-GJS_MIN_VERSION=1.34.0
+GTK_MIN_VERSION=3.13.2
+GJS_MIN_VERSION=1.38.0
 CLUTTER_GTK_MIN_VERSION=1.0.1
 GOBJECT_INTROSPECTION_MIN_VERSION=0.9.6
 GDK_PIXBUF_MIN_VERSION=2.23.0
+HARFBUZZ_MIN_VERSION=0.9.9
 
 PKG_CHECK_MODULES(SUSHI,
                   freetype2
+                  harfbuzz >= $HARFBUZZ_MIN_VERSION
                   glib-2.0 >= $GLIB_MIN_VERSION
                   gobject-introspection-1.0 >= $GOBJECT_INTROSPECTION_MIN_VERSION
                   gjs-1.0 >= $GJS_MIN_VERSION
@@ -64,7 +64,7 @@ PKG_CHECK_MODULES(SUSHI,
                   clutter-x11-1.0 >= $CLUTTER_MIN_VERSION
                   gtk+-3.0 >= $GTK_MIN_VERSION
                   clutter-gtk-1.0 >= $CLUTTER_GTK_MIN_VERSION
-                  clutter-gst-2.0
+                  clutter-gst-3.0
                   gstreamer-1.0
                   gstreamer-pbutils-1.0
                   gstreamer-tag-1.0
@@ -72,7 +72,10 @@ PKG_CHECK_MODULES(SUSHI,
                   evince-document-3.0
                   evince-view-3.0
                   gtksourceview-3.0
-                  webkitgtk-3.0)
+                  webkit2gtk-4.0)
+
+GLIB_COMPILE_RESOURCES=`$PKG_CONFIG --variable glib_compile_resources gio-2.0`
+AC_SUBST(GLIB_COMPILE_RESOURCES)
 
 GLIB_MKENUMS=`$PKG_CONFIG --variable=glib_mkenums glib-2.0`
 AC_SUBST(GLIB_MKENUMS)
@@ -81,7 +84,6 @@ AC_CONFIG_FILES([
 Makefile
 src/Makefile
 data/Makefile
-data/style/Makefile
 po/Makefile.in
 ])
 

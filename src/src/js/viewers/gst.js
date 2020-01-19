@@ -23,7 +23,7 @@
  *
  */
 
-imports.gi.versions.ClutterGst = '2.0';
+imports.gi.versions.ClutterGst = '3.0';
 const ClutterGst = imports.gi.ClutterGst;
 const Clutter = imports.gi.Clutter;
 const Gdk = imports.gi.Gdk;
@@ -38,11 +38,9 @@ const MimeHandler = imports.ui.mimeHandler;
 const TotemMimeTypes = imports.util.totemMimeTypes;
 const Utils = imports.ui.utils;
 
-function GstRenderer(args) {
-    this._init(args);
-}
+const GstRenderer = new Lang.Class({
+    Name: 'GstRenderer',
 
-GstRenderer.prototype = {
     _init : function(args) {
         this.moveOnClick = true;
         this.canFullScreen = true;
@@ -62,29 +60,33 @@ GstRenderer.prototype = {
     },
 
     clear : function() {
-        this._video.playing = false;
+        this._player.playing = false;
     },
 
     _createVideo : function(file) {
-        this._video =
-            new ClutterGst.VideoTexture({ sync_size: false });
+        this._player = new ClutterGst.Playback();
+        this._video = new Clutter.Actor({
+            content: new ClutterGst.Aspectratio({
+                player: this._player
+            })
+        });
 
-        this._video.set_uri(file.get_uri());
-        this._video.playing = true;
+        this._player.set_uri(file.get_uri());
+        this._player.playing = true;
 
         this._videoSizeChangeId =
-            this._video.connect('size-change',
-                                Lang.bind(this,
-                                          this._onVideoSizeChange));
-        this._video.connect('notify::playing',
-                            Lang.bind(this,
-                                      this._onVideoPlayingChange));
-        this._video.connect('notify::progress',
-                            Lang.bind(this,
-                                      this._onVideoProgressChange));
-        this._video.connect('notify::duration',
-                            Lang.bind(this,
-                                      this._onVideoDurationChange));
+            this._player.connect('size-change',
+                                 Lang.bind(this,
+                                           this._onVideoSizeChange));
+        this._player.connect('notify::playing',
+                             Lang.bind(this,
+                                       this._onVideoPlayingChange));
+        this._player.connect('notify::progress',
+                             Lang.bind(this,
+                                       this._onVideoProgressChange));
+        this._player.connect('notify::duration',
+                             Lang.bind(this,
+                                       this._onVideoDurationChange));
     },
 
     _updateProgressBar : function() {
@@ -92,7 +94,7 @@ GstRenderer.prototype = {
             return;
 
         this._isSettingValue = true;
-        this._progressBar.set_value(this._video.progress * 1000);
+        this._progressBar.set_value(this._player.progress * 1000);
         this._isSettingValue = false;
     },
 
@@ -101,7 +103,7 @@ GstRenderer.prototype = {
             return;
 
         let currentTime =
-            Math.floor(this._video.duration * this._video.progress);
+            Math.floor(this._player.duration * this._player.progress);
 
         this._currentLabel.set_text(Utils.formatTimeString(currentTime));
     },
@@ -110,7 +112,7 @@ GstRenderer.prototype = {
         if (!this._mainToolbar)
             return;
 
-        let totalTime = this._video.duration;
+        let totalTime = this._player.duration;
 
         this._durationLabel.set_text(Utils.formatTimeString(totalTime));
     },
@@ -125,13 +127,11 @@ GstRenderer.prototype = {
     },
 
     _onVideoPlayingChange : function() {
-        if (this._video.playing)
+        if (this._player.playing)
             this._toolbarPlay.set_icon_name('media-playback-pause-symbolic');
         else
         {
-            let iconName =
-            (this._toolbarPlay.get_direction() == Gtk.TextDirection.RTL) ?
-                'media-playback-start-rtl-symbolic' : 'media-playback-start-symbolic';
+            let iconName = 'media-playback-start-symbolic';
             this._toolbarPlay.set_icon_name(iconName);
         }
     },
@@ -161,8 +161,8 @@ GstRenderer.prototype = {
         this._toolbarPlay.show();
         this._mainToolbar.insert(this._toolbarPlay, 0);
 
-        this._currentLabel = new Gtk.Label({ margin_left: 6,
-                                             margin_right: 3 });
+        this._currentLabel = new Gtk.Label({ margin_start: 6,
+                                             margin_end: 3 });
         let item = new Gtk.ToolItem();
         item.add(this._currentLabel);
         item.show_all();
@@ -170,8 +170,8 @@ GstRenderer.prototype = {
 
         this._toolbarPlay.connect('clicked',
                                   Lang.bind(this, function () {
-                                      let playing = !this._video.playing;
-                                      this._video.playing = playing;
+                                      let playing = !this._player.playing;
+                                      this._player.playing = playing;
                                   }));
 
         this._progressBar =
@@ -182,7 +182,7 @@ GstRenderer.prototype = {
         this._progressBar.connect('value-changed',
                                   Lang.bind(this, function() {
                                       if(!this._isSettingValue)
-                                          this._video.progress = this._progressBar.get_value() / 1000;
+                                          this._player.progress = this._progressBar.get_value() / 1000;
                                   }));
 
         item = new Gtk.ToolItem();
@@ -191,8 +191,8 @@ GstRenderer.prototype = {
         item.show_all();
         this._mainToolbar.insert(item, 2);
 
-        this._durationLabel = new Gtk.Label({ margin_left: 3,
-                                              margin_right: 6 });
+        this._durationLabel = new Gtk.Label({ margin_start: 3,
+                                              margin_end: 6 });
         item = new Gtk.ToolItem();
         item.add(this._durationLabel);
         item.show_all();
@@ -204,13 +204,13 @@ GstRenderer.prototype = {
         return this._toolbarActor;
     },
 
-    _onVideoSizeChange : function(video, width, height) {
+    _onVideoSizeChange : function(player, width, height) {
         this._videoWidth = width;
         this._videoHeight = height;
 
         this._mainWindow.refreshSize();
     },
-}
+});
 
 let handler = new MimeHandler.MimeHandler();
 let renderer = new GstRenderer();

@@ -23,6 +23,7 @@
  *
  */
 
+const GdkPixbuf = imports.gi.GdkPixbuf;
 const Gio = imports.gi.Gio;
 const Gst = imports.gi.Gst;
 const Gtk = imports.gi.Gtk;
@@ -38,11 +39,9 @@ const MimeHandler = imports.ui.mimeHandler;
 const TotemMimeTypes = imports.util.totemMimeTypes;
 const Utils = imports.ui.utils;
 
-function AudioRenderer(args) {
-    this._init(args);
-}
+const AudioRenderer = new Lang.Class({
+    Name: 'AudioRenderer',
 
-AudioRenderer.prototype = {
     _init : function() {
         this.moveOnClick = true;
         this.canFullScreen = false;
@@ -64,8 +63,8 @@ AudioRenderer.prototype = {
         let vbox = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL,
                                  spacing: 1,
                                  margin_top: 48,
-                                 margin_left: 12,
-                                 margin_right: 12 });
+                                 margin_start: 12,
+                                 margin_end: 12 });
         this._box.pack_start(vbox, false, false, 0);
 
         this._titleLabel = new Gtk.Label();
@@ -237,9 +236,7 @@ AudioRenderer.prototype = {
             this._toolbarPlay.set_icon_name('media-playback-pause-symbolic');
             break;
         default:
-            let iconName =
-            (this._toolbarPlay.get_direction() == Gtk.TextDirection.RTL) ?
-                'media-playback-start-rtl-symbolic' : 'media-playback-start-symbolic';
+            let iconName = 'media-playback-start-symbolic';
             this._toolbarPlay.set_icon_name(iconName);
         }
     },
@@ -258,7 +255,8 @@ AudioRenderer.prototype = {
     },
 
     createToolbar : function () {
-        this._mainToolbar = new Gtk.Toolbar();
+        this._mainToolbar = new Gtk.Toolbar({ margin_start: Constants.TOOLBAR_SPACING,
+                                              margin_end: Constants.TOOLBAR_SPACING });
         this._mainToolbar.get_style_context().add_class('osd');
         this._mainToolbar.set_icon_size(Gtk.IconSize.MENU);
         this._mainToolbar.show();
@@ -271,8 +269,8 @@ AudioRenderer.prototype = {
         this._toolbarPlay.show();
         this._mainToolbar.insert(this._toolbarPlay, 0);
 
-        this._currentLabel = new Gtk.Label({ margin_left: 6,
-                                             margin_right: 3 });
+        this._currentLabel = new Gtk.Label({ margin_start: 6,
+                                             margin_end: 3 });
         let item = new Gtk.ToolItem();
         item.add(this._currentLabel);
         item.show_all();
@@ -301,7 +299,7 @@ AudioRenderer.prototype = {
         item.show_all();
         this._mainToolbar.insert(item, 2);
 
-        this._durationLabel = new Gtk.Label({ margin_left: 3 });
+        this._durationLabel = new Gtk.Label({ margin_start: 3 });
         item = new Gtk.ToolItem();
         item.add(this._durationLabel);
         item.show_all();
@@ -309,7 +307,7 @@ AudioRenderer.prototype = {
 
         return this._toolbarActor;
     },
-}
+});
 
 let handler = new MimeHandler.MimeHandler();
 let renderer = new AudioRenderer();

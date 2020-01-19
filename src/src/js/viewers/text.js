@@ -23,23 +23,21 @@
  *
  */
 
+const Gdk = imports.gi.Gdk;
 const GtkClutter = imports.gi.GtkClutter;
 const Gtk = imports.gi.Gtk;
 const GLib = imports.gi.GLib;
 const GtkSource = imports.gi.GtkSource;
 const Gio = imports.gi.Gio;
+const Lang = imports.lang;
 const Sushi = imports.gi.Sushi;
 
 const MimeHandler = imports.ui.mimeHandler;
 const Utils = imports.ui.utils;
 
-const Lang = imports.lang;
+const TextRenderer = new Lang.Class({
+    Name: 'TextRenderer',
 
-function TextRenderer(args) {
-    this._init(args);
-}
-
-TextRenderer.prototype = {
     _init : function(args) {
         this.moveOnClick = false;
         this.canFullScreen = true;
@@ -81,19 +79,20 @@ TextRenderer.prototype = {
 
         this._view = new GtkSource.View({ buffer: this._buffer,
                                           editable: false,
-                                          cursor_visible: false });
+                                          cursor_visible: false,
+                                          monospace: true });
         this._view.set_can_focus(false);
 
         if (this._buffer.get_language())
             this._view.set_show_line_numbers(true);
 
-        // FIXME: *very* ugly wokaround to the fact that we can't
-        // access event.button from a button-press callback to block
-        // right click
-        this._view.connect('populate-popup',
-                           Lang.bind(this, function(widget, menu) {
-                               menu.destroy();
-                           }));
+        this._view.connect('button-press-event', Lang.bind(this, function(view, event) {
+            let [, button] = event.get_button();
+            if (button == Gdk.BUTTON_SECONDARY)
+                return true;
+
+            return false;
+        }));
 
         this._scrolledWin = Gtk.ScrolledWindow.new(null, null);
         this._scrolledWin.add(this._view);
@@ -122,7 +121,7 @@ TextRenderer.prototype = {
 
         return this._toolbarActor;
     }
-}
+});
 
 let handler = new MimeHandler.MimeHandler();
 let renderer = new TextRenderer();

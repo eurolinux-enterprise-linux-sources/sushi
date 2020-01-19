@@ -23,16 +23,11 @@
  *
  */
 
-const Lang = imports.lang;
-
-// util imports
-const Path = imports.util.path;
-
-// gi imports
-const GLib = imports.gi.GLib;
-const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
 const Gio = imports.gi.Gio;
+const GLib = imports.gi.GLib;
+const Gtk = imports.gi.Gtk;
+const Lang = imports.lang;
 
 const MainWindow = imports.ui.mainWindow;
 
@@ -57,9 +52,6 @@ const Application = new Lang.Class({
 
     _init : function(args) {
         this.parent({ application_id: SUSHI_DBUS_NAME });
-
-        this._dbusImpl = Gio.DBusExportedObject.wrapJSObject(SushiIface, this);
-        this._dbusImpl.export(Gio.DBus.session, SUSHI_DBUS_PATH);
     },
 
     vfunc_startup : function() {
@@ -67,6 +59,13 @@ const Application = new Lang.Class({
 
         this._defineStyleAndThemes();
         this._createMainWindow();
+    },
+
+    vfunc_dbus_register : function(connection, path) {
+	this._dbusImpl = Gio.DBusExportedObject.wrapJSObject(SushiIface, this);
+        this._dbusImpl.export(connection, SUSHI_DBUS_PATH);
+
+	return this.parent(connection, path);
     },
 
     vfunc_activate : function() {
@@ -79,7 +78,7 @@ const Application = new Lang.Class({
 
     _defineStyleAndThemes : function() {
         let provider = new Gtk.CssProvider();
-        provider.load_from_path(Path.STYLE_DIR + 'gtk-style.css');
+	provider.load_from_resource('/org/gnome/Sushi/gtk-style.css');
         Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(),
                                                  provider,
                                                  600);
