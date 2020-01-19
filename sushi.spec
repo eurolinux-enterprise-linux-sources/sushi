@@ -1,11 +1,11 @@
 Name:           sushi
-Version:        3.21.91
+Version:        3.28.3
 Release:        1%{?dist}
 Summary:        A quick previewer for Nautilus
 
 License:        GPLv2+ with exceptions
 URL:            https://wiki.gnome.org/ThreePointOne/Features/FilePreviewing
-Source0:        https://download.gnome.org/sources/%{name}/3.21/%{name}-%{version}.tar.xz
+Source0:        https://download.gnome.org/sources/%{name}/3.28/%{name}-%{version}.tar.xz
 
 BuildRequires:  intltool
 BuildRequires:  gjs-devel
@@ -59,6 +59,10 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
 
 %changelog
+* Wed Jun 06 2018 Richard Hughes <rhughes@redhat.com> - 3.28.3-1
+- Update to 3.28.3
+- Resolves: #1569786
+
 * Thu Feb 23 2017 Matthias Clasen <mclasen@redhatcom> - 3.21.91-1
 - Rebase to 3.21.91
   Resolves: rhbz#1387047

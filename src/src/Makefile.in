@@ -380,6 +380,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -425,8 +426,7 @@ do_subst = sed -e 's|@abs_top_srcdir[@]|$(abs_top_srcdir)|g' \
                -e 's|@libdir[@]|$(libdir)|g' \
                -e 's|@libexecdir[@]|$(libexecdir)|g' \
                -e 's|@pkglibdir[@]|$(pkglibdir)|g' \
-               -e 's|@pkgdatadir[@]|$(pkgdatadir)|g' \
-               -e 's|@have_unoconv[@]|$(HAVE_UNOCONV)|g'
+               -e 's|@pkgdatadir[@]|$(pkgdatadir)|g'
 
 jsuidir = $(pkgdatadir)/js/ui
 dist_jsui_DATA = \
@@ -452,7 +452,6 @@ dist_jsviewers_DATA = \
 jsutildir = $(pkgdatadir)/js/util
 dist_jsutil_DATA = \
     js/util/constants.js \
-    js/util/format.js \
     js/util/totemMimeTypes.js
 
 jsutil_built_sources = \

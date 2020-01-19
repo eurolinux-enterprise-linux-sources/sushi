@@ -23,6 +23,8 @@
  *
  */
 
+imports.gi.versions.GdkX11 = '3.0';
+
 const Clutter = imports.gi.Clutter;
 const ClutterGdk = imports.gi.ClutterGdk;
 const Gdk = imports.gi.Gdk;
@@ -49,6 +51,7 @@ const MainWindow = new Lang.Class({
         args = args || {};
 
         this._background = null;
+        this._isFullScreen = false;
         this._pendingRenderer = null;
         this._renderer = null;
         this._texture = null;
@@ -568,13 +571,15 @@ const MainWindow = new Lang.Class({
 
     toggleFullScreen : function() {
         if (!this._renderer.canFullScreen)
-            return;
+            return false;
 
         if (this._isFullScreen) {
             this._exitFullScreen();
         } else {
             this._enterFullScreen();
         }
+
+        return this._isFullScreen;
     },
 
     close : function() {
