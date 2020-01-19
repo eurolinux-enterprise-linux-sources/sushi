@@ -12,9 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * The Sushi project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and Sushi. This
@@ -25,16 +23,17 @@
  *
  */
 
-let MimeHandler = imports.ui.mimeHandler;
-let GdkPixbuf = imports.gi.GdkPixbuf;
-let GtkClutter = imports.gi.GtkClutter;
-let Gtk = imports.gi.Gtk;
-let GLib = imports.gi.GLib;
+const GdkPixbuf = imports.gi.GdkPixbuf;
+const GtkClutter = imports.gi.GtkClutter;
+const Gtk = imports.gi.Gtk;
+const GLib = imports.gi.GLib;
 
-let Gettext = imports.gettext.domain('sushi');
-let _ = Gettext.gettext;
+const Gettext = imports.gettext.domain('sushi');
+const _ = Gettext.gettext;
+const Lang = imports.lang;
 
-let Utils = imports.ui.utils;
+const MimeHandler = imports.ui.mimeHandler;
+const Utils = imports.ui.utils;
 
 function ImageRenderer(args) {
     this._init(args);
@@ -118,7 +117,7 @@ let handler = new MimeHandler.MimeHandler();
 let renderer = new ImageRenderer();
 
 let formats = GdkPixbuf.Pixbuf.get_formats();
-for (idx in formats) {
+for (let idx in formats) {
     let mimeTypes = formats[idx].get_mime_types();
     handler.registerMimeTypes(mimeTypes, renderer);
 }

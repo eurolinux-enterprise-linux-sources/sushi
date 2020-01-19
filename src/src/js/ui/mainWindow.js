@@ -12,9 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * The Sushi project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and Sushi. This
@@ -25,6 +23,7 @@
  *
  */
 
+const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gdk = imports.gi.Gdk;
@@ -317,6 +316,7 @@ MainWindow.prototype = {
                             this._pendingRenderer.prepare(file, this, Lang.bind(this, this._onRendererPrepared));
                         } catch(e) {
                             /* FIXME: report the error */
+                            logError(e, 'Error calling prepare() on viewer');
                         }}));
     },
 

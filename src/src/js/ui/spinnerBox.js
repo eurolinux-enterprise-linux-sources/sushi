@@ -12,9 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * The Sushi project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and Sushi. This
@@ -25,11 +23,14 @@
  *
  */
 
-let Clutter = imports.gi.Clutter;
-let Gtk = imports.gi.Gtk;
+const Gettext = imports.gettext.domain('sushi');
+const _ = Gettext.gettext;
+const Gtk = imports.gi.Gtk;
+const GtkClutter = imports.gi.GtkClutter;
 
-let Tweener = imports.ui.tweener;
-let Mainloop = imports.mainloop;
+const Tweener = imports.ui.tweener;
+const Lang = imports.lang;
+const Mainloop = imports.mainloop;
 
 let SPINNER_SIZE = 48;
 let TIMEOUT = 500;

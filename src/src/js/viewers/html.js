@@ -12,9 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * The Sushi project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and Sushi. This
@@ -25,15 +23,14 @@
  *
  */
 
-let MimeHandler = imports.ui.mimeHandler;
-let GtkClutter = imports.gi.GtkClutter;
-let Gtk = imports.gi.Gtk;
-let GLib = imports.gi.GLib;
-let WebKit = imports.gi.WebKit;
+const GtkClutter = imports.gi.GtkClutter;
+const Gtk = imports.gi.Gtk;
+const GLib = imports.gi.GLib;
+const WebKit = imports.gi.WebKit;
+const Sushi = imports.gi.Sushi;
 
-let Sushi = imports.gi.Sushi;
-
-let Utils = imports.ui.utils;
+const MimeHandler = imports.ui.mimeHandler;
+const Utils = imports.ui.utils;
 
 function HTMLRenderer(args) {
     this._init(args);

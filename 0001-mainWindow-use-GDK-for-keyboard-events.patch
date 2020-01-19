@@ -1,0 +1,59 @@
+From d5e5f06788c8e2adf27856a97409dfdf142c303f Mon Sep 17 00:00:00 2001
+From: Cosimo Cecchi <cosimoc@gnome.org>
+Date: Mon, 9 Mar 2015 10:36:39 -0700
+Subject: [PATCH] mainWindow: use GDK for keyboard events
+
+When listening to key events, use the GtkWindow instead of the stage.
+This seems to help with a deadlock in the Clutter GDK backend.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=745738
+---
+ src/js/ui/mainWindow.js | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+
+diff --git a/src/js/ui/mainWindow.js b/src/js/ui/mainWindow.js
+index b434a8e..51ccb55 100644
+--- a/src/js/ui/mainWindow.js
++++ b/src/js/ui/mainWindow.js
+@@ -124,8 +124,9 @@ MainWindow.prototype = {
+         this._stage.add_actor(this._mainGroup);
+         this._mainGroup.set_opacity(0);
+ 
+-        this._stage.connect('key-press-event',
+-                            Lang.bind(this, this._onStageKeyPressEvent));
++        this._gtkWindow.connect('key-press-event',
++				Lang.bind(this, this._onKeyPressEvent));
++
+         this._stage.connect('button-press-event',
+                             Lang.bind(this, this._onButtonPressEvent));
+         this._stage.connect('motion-event',
+@@ -174,17 +175,19 @@ MainWindow.prototype = {
+         this._clearAndQuit();
+     },
+ 
+-    _onStageKeyPressEvent : function(actor, event) {
+-        let key = event.get_key_symbol();
++    _onKeyPressEvent : function(actor, event) {
++        let key = event.get_keyval()[1];
+ 
+-        if (key == Clutter.KEY_Escape ||
+-            key == Clutter.KEY_space ||
+-            key == Clutter.KEY_q)
++        if (key == Gdk.KEY_Escape ||
++            key == Gdk.KEY_space ||
++            key == Gdk.KEY_q)
+             this._fadeOutWindow();
+ 
+-        if (key == Clutter.KEY_f ||
+-            key == Clutter.KEY_F11)
++        if (key == Gdk.KEY_f ||
++            key == Gdk.KEY_F11)
+             this.toggleFullScreen();
++
++        return false;
+     },
+ 
+     _onButtonPressEvent : function(actor, event) {
+-- 
+2.5.0
+

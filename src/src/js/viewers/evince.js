@@ -12,9 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * The Sushi project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and Sushi. This
@@ -25,16 +23,19 @@
  *
  */
 
-let MimeHandler = imports.ui.mimeHandler;
-let EvDoc = imports.gi.EvinceDocument;
-let EvView = imports.gi.EvinceView;
+const EvDoc = imports.gi.EvinceDocument;
+const EvView = imports.gi.EvinceView;
+const Gtk = imports.gi.Gtk;
+const GtkClutter = imports.gi.GtkClutter;
+const Sushi = imports.gi.Sushi;
 
-let Sushi = imports.gi.Sushi;
+const Gettext = imports.gettext.domain('sushi');
+const _ = Gettext.gettext;
+const Lang = imports.lang;
 
-let Gettext = imports.gettext.domain('sushi');
-let _ = Gettext.gettext;
-
-let Utils = imports.ui.utils;
+const Constants = imports.util.constants;
+const MimeHandler = imports.ui.mimeHandler;
+const Utils = imports.ui.utils;
 
 function EvinceRenderer(args) {
     this._init(args);
@@ -132,8 +133,12 @@ EvinceRenderer.prototype = {
 
         this._toolbarActor = new GtkClutter.Actor({ contents: this._mainToolbar });
 
+        let isRtl = (this._mainToolbar.get_direction() == Gtk.TextDirection.RTL);
+        let prevIconName = isRtl ? 'go-previous-rtl-symbolic' : 'go-previous-symbolic';
+        let nextIconName = isRtl ? 'go-next-rtl-symbolic' : 'go-next-symbolic';
+
         this._toolbarBack = new Gtk.ToolButton({ expand: false,
-                                                 icon_name: 'go-previous-symbolic' });
+                                                 icon_name: prevIconName });
         this._toolbarBack.show();
         this._mainToolbar.insert(this._toolbarBack, -1);
 
@@ -146,7 +151,7 @@ EvinceRenderer.prototype = {
         this._mainToolbar.insert(labelItem, -1);
 
         this._toolbarForward = new Gtk.ToolButton({ expand: false,
-                                                    icon_name: 'go-next-symbolic' });
+                                                    icon_name: nextIconName });
         this._toolbarForward.show();
         this._mainToolbar.insert(this._toolbarForward, -1);
 

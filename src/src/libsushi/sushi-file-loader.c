@@ -12,9 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * The Sushi project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and Sushi. This
@@ -25,11 +23,13 @@
  *
  */
 
+#include <config.h>
+
 #include "sushi-file-loader.h"
 
 #include <gtk/gtk.h>
 
-#include <glib/gi18n.h>
+#include <glib/gi18n-lib.h>
 
 #define LOADER_ATTRS                          \
   G_FILE_ATTRIBUTE_STANDARD_ICON ","          \
@@ -635,7 +635,7 @@ sushi_file_loader_get_size_string (SushiFileLoader *self)
     /* FIXME: we prolly could also use directory_items and unreadable_items
      * somehow.
      */
-    items_str = g_dngettext (NULL,
+    items_str = g_dngettext (GETTEXT_PACKAGE,
                              "%d item",
                              "%d items",
                              self->priv->file_items + self->priv->directory_items);

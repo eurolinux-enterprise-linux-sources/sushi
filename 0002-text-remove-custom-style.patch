@@ -1,0 +1,13 @@
+diff -up sushi-3.12.0/data/style/gtk-style.css.text-style sushi-3.12.0/data/style/gtk-style.css
+--- sushi-3.12.0/data/style/gtk-style.css.text-style	2014-04-22 19:14:38.000000000 -0400
++++ sushi-3.12.0/data/style/gtk-style.css	2015-08-18 11:21:48.045756499 -0400
+@@ -7,8 +7,6 @@ GtkWindow {
+ }
+ 
+ GtkSourceView {
+-    color: @np_text_color;
+-    background-color: shade (@np_fg_color, 1.10);
+     font: Monospace 10;
+ }
+ 
+diff -up sushi-3.12.0/src/js/viewers/text.js.text-style sushi-3.12.0/src/js/viewers/text.js

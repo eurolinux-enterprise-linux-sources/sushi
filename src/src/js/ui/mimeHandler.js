@@ -12,9 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * The Sushi project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and Sushi. This
@@ -27,7 +25,7 @@
 
 const FallbackRenderer = imports.ui.fallbackRenderer;
 
-let Gio = imports.gi.Gio;
+const Gio = imports.gi.Gio;
 
 let _mimeHandler = null;
 
@@ -58,7 +56,7 @@ MimeHandler.prototype = {
     },
 
     registerMimeTypes: function(mimeTypes, obj) {
-        for (idx in mimeTypes)
+        for (let idx in mimeTypes)
             this.registerMime(mimeTypes[idx], obj);
     },
 
@@ -70,7 +68,7 @@ MimeHandler.prototype = {
             /* if this fails, try to see if we have any handlers
              * registered for a parent type.
              */
-            for (key in this._mimeTypes) {
+            for (let key in this._mimeTypes) {
                 if (Gio.content_type_is_a (mime, key))
                     return this._mimeTypes[key];
             }

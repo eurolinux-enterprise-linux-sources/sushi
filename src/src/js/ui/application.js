@@ -12,9 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * The Sushi project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and Sushi. This
@@ -41,15 +39,17 @@ const MainWindow = imports.ui.mainWindow;
 const SUSHI_DBUS_PATH = '/org/gnome/NautilusPreviewer';
 const SUSHI_DBUS_NAME = 'org.gnome.NautilusPreviewer';
 
-const SushiIface = <interface name={SUSHI_DBUS_NAME}>
-<method name="ShowFile">
-    <arg type="s" direction="in" name="uri" />
-    <arg type="i" direction="in" name="xid" />
-    <arg type="b" direction="in" name="closeIfAlreadyShown" />
-</method>
-<method name="Close">
-</method>
-</interface>;
+const SushiIface = '<node> \
+<interface name="org.gnome.NautilusPreviewer"> \
+<method name="ShowFile"> \
+    <arg type="s" direction="in" name="uri" /> \
+    <arg type="i" direction="in" name="xid" /> \
+    <arg type="b" direction="in" name="closeIfAlreadyShown" /> \
+</method> \
+<method name="Close"> \
+</method> \
+</interface> \
+</node>';
 
 const Application = new Lang.Class({
     Name: 'Application',

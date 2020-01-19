@@ -12,9 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * The Sushi project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and Sushi. This
@@ -25,14 +23,17 @@
  *
  */
 
-let Gtk = imports.gi.Gtk;
-let Sushi = imports.gi.Sushi;
+const Gio = imports.gi.Gio;
+const Gtk = imports.gi.Gtk;
+const GtkClutter = imports.gi.GtkClutter;
+const Sushi = imports.gi.Sushi;
 
-let Gettext = imports.gettext.domain('sushi');
-let _ = Gettext.gettext;
+const Gettext = imports.gettext.domain('sushi');
+const _ = Gettext.gettext;
+const Lang = imports.lang;
 
-let Constants = imports.util.constants;
-let Utils = imports.ui.utils;
+const Constants = imports.util.constants;
+const Utils = imports.ui.utils;
 
 function FallbackRenderer(args) {
     this._init(args);
@@ -146,8 +147,6 @@ FallbackRenderer.prototype = {
 
         if (this._fileLoader.icon)
             this._image.set_from_pixbuf(this._fileLoader.icon);
-        else
-            this._setImageFromType();
 
         this._applyLabels();
         this._mainWindow.refreshSize();

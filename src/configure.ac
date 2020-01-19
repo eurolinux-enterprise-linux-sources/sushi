@@ -1,6 +1,6 @@
 dnl -*- mode: m4 -*-
 AC_PREREQ(2.63)
-AC_INIT([sushi],[3.8.1],[],[sushi])
+AC_INIT([sushi],[3.12.0],[],[sushi])
 
 AC_CONFIG_HEADERS([config/config.h])
 AC_CONFIG_SRCDIR([src/main.c])
@@ -20,9 +20,6 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The name of the gettext domain])
 IT_PROG_INTLTOOL(0.40.0)
 PKG_PROG_PKG_CONFIG([0.22])
-
-AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.17])
 
 GOBJECT_INTROSPECTION_REQUIRE([0.9.6])
 

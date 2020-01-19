@@ -12,9 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * The Sushi project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and Sushi. This
@@ -25,17 +23,20 @@
  *
  */
 
-let MimeHandler = imports.ui.mimeHandler;
-let Gst = imports.gi.Gst;
-let Gio = imports.gi.Gio;
+const Gio = imports.gi.Gio;
+const Gst = imports.gi.Gst;
+const Gtk = imports.gi.Gtk;
+const GtkClutter = imports.gi.GtkClutter;
+const Sushi = imports.gi.Sushi;
 
-let Gettext = imports.gettext.domain('sushi');
-let _ = Gettext.gettext;
+const Gettext = imports.gettext.domain('sushi');
+const _ = Gettext.gettext;
+const Lang = imports.lang;
 
-let Constants = imports.util.constants;
-let TotemMimeTypes = imports.util.totemMimeTypes;
-
-let Utils = imports.ui.utils;
+const Constants = imports.util.constants;
+const MimeHandler = imports.ui.mimeHandler;
+const TotemMimeTypes = imports.util.totemMimeTypes;
+const Utils = imports.ui.utils;
 
 function AudioRenderer(args) {
     this._init(args);
@@ -236,7 +237,10 @@ AudioRenderer.prototype = {
             this._toolbarPlay.set_icon_name('media-playback-pause-symbolic');
             break;
         default:
-            this._toolbarPlay.set_icon_name('media-playback-start-symbolic');
+            let iconName =
+            (this._toolbarPlay.get_direction() == Gtk.TextDirection.RTL) ?
+                'media-playback-start-rtl-symbolic' : 'media-playback-start-symbolic';
+            this._toolbarPlay.set_icon_name(iconName);
         }
     },
 

@@ -12,9 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * The Sushi project hereby grant permission for non-gpl compatible GStreamer
  * plugins to be used and distributed together with GStreamer and Sushi. This
@@ -26,18 +24,19 @@
  */
 
 imports.gi.versions.ClutterGst = '2.0';
-let ClutterGst = imports.gi.ClutterGst;
+const ClutterGst = imports.gi.ClutterGst;
+const Clutter = imports.gi.Clutter;
+const Gdk = imports.gi.Gdk;
+const GObject = imports.gi.GObject;
+const Gtk = imports.gi.Gtk;
+const GtkClutter = imports.gi.GtkClutter;
 
-let MimeHandler = imports.ui.mimeHandler;
-let Clutter = imports.gi.Clutter;
-let Gdk = imports.gi.Gdk;
-let GObject = imports.gi.GObject;
+const Lang = imports.lang;
 
-let Lang = imports.lang;
-
-let Utils = imports.ui.utils;
-let Constants = imports.util.constants;
-let TotemMimeTypes = imports.util.totemMimeTypes;
+const Constants = imports.util.constants;
+const MimeHandler = imports.ui.mimeHandler;
+const TotemMimeTypes = imports.util.totemMimeTypes;
+const Utils = imports.ui.utils;
 
 function GstRenderer(args) {
     this._init(args);
@@ -129,7 +128,12 @@ GstRenderer.prototype = {
         if (this._video.playing)
             this._toolbarPlay.set_icon_name('media-playback-pause-symbolic');
         else
-            this._toolbarPlay.set_icon_name('media-playback-start-symbolic');
+        {
+            let iconName =
+            (this._toolbarPlay.get_direction() == Gtk.TextDirection.RTL) ?
+                'media-playback-start-rtl-symbolic' : 'media-playback-start-symbolic';
+            this._toolbarPlay.set_icon_name(iconName);
+        }
     },
 
     getSizeForAllocation : function(allocation) {

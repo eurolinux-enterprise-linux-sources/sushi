@@ -1,12 +1,17 @@
 Name:           sushi
-Version:        3.8.1
+Version:        3.12.0
 Release:        3%{?dist}
 Summary:        A quick previewer for Nautilus
 Group:          User Interface/Desktops
 
 License:        GPLv2+ with exceptions
 URL:            http://live.gnome.org/ThreePointOne/Features/FilePreviewing
-Source0:        http://ftp.gnome.org/pub/GNOME/sources/%{name}/3.8/%{name}-%{version}.tar.xz
+Source0:        http://ftp.gnome.org/pub/GNOME/sources/%{name}/3.12/%{name}-%{version}.tar.xz
+
+Patch0: 0001-text-properly-block-right-click-button-press-event.patch
+Patch1: 0002-text-remove-custom-style.patch
+Patch2: 0001-mainWindow-use-GDK-for-keyboard-events.patch
+Patch3: 0003-mainWindow-listen-to-motion-notify-signals-on-the-wi.patch
 
 BuildRequires:  gtksourceview3-devel
 BuildRequires:  intltool
@@ -30,6 +35,10 @@ file manager.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
 %configure --disable-static
@@ -57,6 +66,17 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
 
 %changelog
+* Tue Aug 18 2015 Matthias Clasen <mclasen@redhatcom> - 3.13.0-3
+- Fix an undefined variable
+Resolve: #1254181
+
+* Wed Jul 22 2015 Matthias Clasen <mclasen@redhatcom> - 3.13.0-2
+- Fix a crash and some other issues with text preview
+Resolves: #1207706
+
+* Mon Mar 23 2015 Richard Hughes <rhughes@redhat.com> - 3.12.0-1
+- Update to 3.12.0
+
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 3.8.1-3
 - Mass rebuild 2014-01-24
 
